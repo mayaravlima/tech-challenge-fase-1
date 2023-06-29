@@ -1,7 +1,7 @@
-package com.postech.techchallengefase1.controller;
+package com.postech.techchallengefase1.domain.address.controller;
 
-import com.postech.techchallengefase1.domain.Address;
-import com.postech.techchallengefase1.service.AddressService;
+import com.postech.techchallengefase1.domain.address.service.AddressService;
+import com.postech.techchallengefase1.domain.address.entity.Address;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.postech.techchallengefase1.repository;
+package com.postech.techchallengefase1.domain.address.repository;
 
-import com.postech.techchallengefase1.domain.Address;
+import com.postech.techchallengefase1.domain.address.entity.Address;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;

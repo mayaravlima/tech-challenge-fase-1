@@ -1,7 +1,7 @@
-package com.postech.techchallengefase1.controller;
+package com.postech.techchallengefase1.domain.appliance.controller;
 
-import com.postech.techchallengefase1.domain.Appliance;
-import com.postech.techchallengefase1.service.ApplianceService;
+import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
+import com.postech.techchallengefase1.domain.appliance.service.ApplianceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

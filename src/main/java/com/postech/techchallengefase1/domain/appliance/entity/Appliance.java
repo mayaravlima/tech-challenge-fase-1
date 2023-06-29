@@ -1,4 +1,4 @@
-package com.postech.techchallengefase1.domain;
+package com.postech.techchallengefase1.domain.appliance.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

@@ -1,7 +1,7 @@
-package com.postech.techchallengefase1.service;
+package com.postech.techchallengefase1.domain.person.service;
 
-import com.postech.techchallengefase1.domain.Person;
-import com.postech.techchallengefase1.repository.PersonRepository;
+import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.person.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 @Service

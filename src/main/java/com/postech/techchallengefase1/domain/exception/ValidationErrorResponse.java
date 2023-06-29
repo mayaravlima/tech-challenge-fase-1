@@ -1,4 +1,4 @@
-package com.postech.techchallengefase1.exception;
+package com.postech.techchallengefase1.domain.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
