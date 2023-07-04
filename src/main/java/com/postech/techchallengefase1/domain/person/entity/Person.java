@@ -2,6 +2,7 @@ package com.postech.techchallengefase1.domain.person.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.postech.techchallengefase1.domain.person.enuns.Gender;
 import com.postech.techchallengefase1.domain.person.enuns.Relationship;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -31,9 +32,9 @@ public class Person {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
 
-    @Pattern(regexp = "(?i)[FM]", message = "The gender must be F ou M")
-    private String gender;
+    private Gender gender;
 
+    @NotNull(message = "Relationship can't be empty or null")
     private Relationship relationship;
 
 }

@@ -5,12 +5,11 @@ import com.postech.techchallengefase1.domain.address.entity.Address;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/address")
@@ -23,10 +22,28 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody Address address) {
-        Address result = service.saveAddress(address);
-        return result == null
-                ? ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "This address already exists"))
-                : ResponseEntity.status(HttpStatus.CREATED).body(result);
+    public ResponseEntity<Address> save(@Valid @RequestBody Address address) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAddress(address));
+    }
+
+    @GetMapping
+    public ResponseEntity<Set<Address>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAllAddress());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Address> getById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAddressById(id));
+    }
+
+    @PutMapping
+    public ResponseEntity<Address> update(@Valid @RequestBody Address address) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateAddress(address));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteById(@PathVariable Long id) {
+        service.deleteAddressById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Address deleted successfully"));
     }
 }

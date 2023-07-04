@@ -4,6 +4,7 @@ import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Set;
 
@@ -25,5 +26,36 @@ public class ApplianceRepository {
                 .mapToLong(Appliance::getId)
                 .max();
         return maxId.orElse(0) + 1;
+    }
+
+    public Set<Appliance> getAppliances() {
+        return appliances;
+    }
+
+    public Appliance getApplianceById(Long id) {
+        return appliances.stream()
+                .filter(appliance -> appliance.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Boolean deleteApplianceById(Long id) {
+        return appliances.removeIf(appliance -> appliance.getId().equals(id));
+    }
+
+    public Optional<Appliance> updateAppliance(Appliance appliance) {
+        Optional<Appliance> applianceToUpdate = appliances.stream()
+                .filter(appliance1 -> appliance1.getId().equals(appliance.getId()))
+                .findFirst();
+        if (applianceToUpdate.isPresent()) {
+            Appliance a = applianceToUpdate.get();
+            appliances.remove(a);
+            a.setName(appliance.getName());
+            a.setPower(appliance.getPower());
+            a.setBrand(appliance.getBrand());
+            a.setModel(appliance.getModel());
+            appliances.add(a);
+        }
+        return applianceToUpdate;
     }
 }
