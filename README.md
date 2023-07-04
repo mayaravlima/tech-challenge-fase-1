@@ -6,9 +6,27 @@
 - [Pré-requisitos](#pré-requisitos)
 - [Instalação](#instalação)
 - [Uso](#uso)
+    - [API Pessoas](#api-pessoas)
+        - [Cadastro de Pessoas](#cadastro-de-pessoas)
+        - [Listar todas as pessoas](#listar-todas-as-pessoas)
+        - [Buscar pessoa pelo id](#buscar-pessoa-pelo-id)
+        - [Atualizar pessoa](#atualizar-pessoa)
+        - [Deletar pessoa](#deletar-pessoa)
+    - [API Endereços](#api-endereços)
+        - [Cadastro de Endereços](#cadastro-de-endereços)
+        - [Listar todos os endereços](#listar-todos-os-endereços)
+        - [Buscar endereço pelo id](#buscar-endereço-pelo-id)
+        - [Atualizar endereço](#atualizar-endereço)
+        - [Deletar endereço](#deletar-endereço)
+    - [API Eletrodomésticos](#api-eletrodomésticos)
+        - [Cadastro de Eletrodomésticos](#cadastro-de-eletrodomésticos)
+        - [Listar todos os eletrodomésticos](#listar-todos-os-eletrodomésticos)
+        - [Buscar eletrodoméstico pelo id](#buscar-eletrodoméstico-pelo-id)
+        - [Atualizar eletrodoméstico](#atualizar-eletrodoméstico)
+        - [Deletar eletrodoméstico](#deletar-eletrodoméstico)
 
 ## Pré-requisitos
-Para rodar o projeto em sua máquina é necessário: 
+Para rodar o projeto na sua máquina é necessário: 
 - Java 17
 - Maven
 
@@ -172,7 +190,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
              "gender": "FEMALE",
              "relationship": "SIBLING",
              "date_of_birth": "20/10/2020"
-         },
+         }
         ]
        ```
 
@@ -275,5 +293,440 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
             }
            ```
 
+### API Endereços
+1. Cadastro de endereços
 
+    Endpoint para salvar o rua(street), número(number), complemento(complement), bairro(neighborhood), cidade(city) e estado(state).
 
+- Endpoint:
+  ```sh
+  POST localhost:8080/address
+  ```
+- Body:
+  ```JSON
+  {
+    "street": "Avenida Wallace Simonsen",
+    "number": 5,
+    "complement": "Apto 12",
+    "neighborhood": "Centro",
+    "city": "São Bernardo do Campo",
+    "state": "São Paulo"
+    }
+  ```
+- Validações:
+    1. "street", "neighborhood", "city" e "state": não podem ser nulo e deve conter entre 3 a 50 caracteres
+    2. "number": não pode ser nulo e deve ser maior que 0
+    3. "complement": pode ser nulo
+
+- Retornos:
+  1. Registro salvo com sucesso:
+  
+     Status Code: **200 Ok**
+     ```JSON
+     {
+        "id": 1,
+        "street": "Avenida Wallace Simonsen",
+        "number": 45,
+        "complement": "Ap 12",
+        "neighborhood": "Centro",
+        "city": "São Bernardo do Campo",
+        "state": "São Paulo"
+     }
+     ```
+     
+    2. Se os dados recebidos não estão de acordo com as validações
+       - "street", "neighborhood", "city" e "state" são nulos:
+       
+         Status Code: **400 Bad Request**
+         ```JSON
+         {
+            "errors": [
+                  "Number can't be null",
+                  "City can't be null",
+                  "State can't be null",
+                  "Neighborhood can't be null",
+                  "Street can't be null"
+                    ]
+         }
+         ```
+       - "street", "neighborhood", "city" e "state" com tamanho menor que 3 e maior que 50:
+
+         Status Code: **400 Bad Request**
+         ```JSON
+         {
+            "errors": [
+                "State must be between 3 and 50 characters",
+                "City must be between 3 and 50 characters",
+                "Neighborhood must be between 3 and 50 characters",
+                "Street must be between 3 and 50 characters"
+                      ]
+         }
+         ```
+
+       - "number" é menor ou igual a 0:
+      
+         Status Code: **400 Bad Request**
+         ```JSON
+         {
+            "error": "Number must be more than 0"
+         }
+         ```
+  
+    3. Registro já existe:
+
+          É validado se já existe um registro para o mesmo dados de street, number, complement, neighborhood, city e state.
+  
+          Status Code: **409 Conflict**
+          ```JSON
+            {
+              "error": "This address already exists"
+            }
+          ```
+2. Listar todos os endereços
+
+    Endpoint para retornar uma lista de todos os endereços cadastradas.
+
+- Endpoint:
+  ```sh
+  GET localhost:8080/address
+  ```
+- Resposta:
+
+  Status Code: **200 Ok**
+    ```JSON
+    [
+     {
+        "id": 1,
+        "street": "Avenida Wallace Simonsen",
+        "number": 5,
+        "complement": null,
+        "neighborhood": "Centro",
+        "city": "São Bernardo do Campo",
+        "state": "São Paulo"
+     },
+     {
+        "id": 2,
+        "street": "Rua das Andorinhas",
+        "number": 5,
+        "complement": "Ap 12",
+        "neighborhood": "Parque dos Passáros",
+        "city": "São Bernardo do Campo",
+        "state": "São Paulo"
+     }
+   ]
+    ```
+
+3. Buscar endereço pelo id
+
+    Endpoint para buscar um enderço pelo seu id.
+
+- Endpoint:
+  ```sh
+  GET localhost:8080/address/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+             "id": 1,
+             "street": "Avenida Wallace Simonsen",
+             "number": 5,
+             "complement": null,
+             "neighborhood": "Centro",
+             "city": "São Bernardo do Campo",
+             "state": "São Paulo"
+         }
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Address not found"
+         }
+        ```
+
+4. Deletar um endereço pelo id
+
+    Endpoint para deletar um endereço pelo id
+
+- Endpoint:
+  ```sh
+  DELETE localhost:8080/address/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado e deletado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+           "message": "Address deleted successfully"
+         }      
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Person not found"
+         }
+        ```
+5. Atualizar Endereço
+
+    Endpoint para atualizar os dados de um endereço
+
+- Endpoint:
+  ```sh
+  PUT localhost:8080/address
+  ```
+- Body:
+  ```JSON
+  {
+      "id": 1,
+      "street": "Avenida Wallace Simonsen",
+      "number": 201,
+      "neighborhood": "Centro",
+      "city": "São Bernardo do Campo",
+      "state": "São Paulo"
+   }
+  ```
+
+- Resposta:
+    1. Caso seja encontrado e atualizado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+           "id": 1,
+           "street": "Avenida Wallace Simonsen",
+           "number": 201,
+           "neighborhood": "Centro",
+           "city": "São Bernardo do Campo",
+           "state": "São Paulo"
+         }     
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Address not found"
+         }
+        ```
+
+### API Eletrodomésticos 
+1. Cadastro de eletrodomésticos
+
+   Endpoint para salvar o nome(name), marca(brand), modelo(model)e potência(power) para um equipamento eletrodoméstico
+
+- Endpoint:
+  ```sh
+  POST localhost:8080/appliance
+  ```
+- Body:
+  ```JSON
+  {
+    "name": "Microondas",
+    "brand": "Electrolux",
+    "model": "MI41S",
+    "power": 1500
+    }
+  ```
+- Validações:
+    1. "name", "brand" e "model": não podem ser nulo e deve conter entre 3 a 50 caracteres
+    2. "power": não pode ser nulo e deve ser maior que 0
+
+- Retornos:
+    1. Registro salvo com sucesso:
+
+       Status Code: **200 Ok**
+       ```JSON
+       {
+          "id": 1,
+          "name": "Microondas",
+          "model": "MI41S",
+          "brand": "Electrolux",
+          "power": 1500
+       }
+       ```
+
+    2. Se os dados recebidos não estão de acordo com as validações
+        - "name", "brand", "model" e "power" são nulos:
+
+          Status Code: **400 Bad Request**
+          ```JSON
+          {
+             "errors": [
+                 "Name must be between 3 and 50 characters",
+                 "Model must be between 3 and 50 characters",
+                 "Brand must be between 3 and 50 characters",
+                 "Power must be more than 0"
+             ]
+          }
+          ```
+        - "street", "neighborhood", "city" e "state" com tamanho menor que 3 e maior que 50:
+
+          Status Code: **400 Bad Request**
+          ```JSON
+          {
+             "errors": [
+                 "Name must be between 3 and 50 characters",
+                 "Model must be between 3 and 50 characters",
+                 "Brand must be between 3 and 50 characters"
+             ]
+          }
+          ```
+
+        - "power" é menor ou igual a 0:
+
+          Status Code: **400 Bad Request**
+          ```JSON
+          {
+             "error": "Power must be more than 0"
+          }
+          ```
+
+    3. Registro já existe:
+
+       É validado se já existe um registro com mesmo "name", "model", "brand" e "power".
+
+       Status Code: **409 Conflict**
+          ```JSON
+            {
+              "error": "This appliance already exists"
+            }
+          ```
+2. Listar todas os eletrodomésticos cadastrados
+
+   Endpoint para retornar uma lista de todos os eletrodomésticos cadastradas.
+
+- Endpoint:
+  ```sh
+  GET localhost:8080/appliance
+  ```
+- Resposta:
+
+  Status Code: **200 Ok**
+    ```JSON
+    [
+       {
+        "id": 1,
+        "name": "Microondas",
+        "model": "MI41S",
+        "brand": "Electrolux",
+        "power": 1500
+       },
+       {
+        "id": 2,
+        "name": "Geladeira",
+        "model": "GI41S",
+        "brand": "Electrolux",
+        "power": 2000
+       }
+    ]
+    ```
+
+3. Buscar eletrodoméstico pelo id
+
+   Endpoint para buscar um eletrodoméstico pelo seu id.
+
+- Endpoint:
+  ```sh
+  GET localhost:8080/appliance/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+             "id": 1,
+             "name": "Microondas",
+             "model": "MI41S",
+             "brand": "Electrolux",
+             "power": 1500
+         }
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Appliance not found"
+         }
+        ```
+
+4. Deletar um eletrodoméstico pelo id
+
+   Endpoint para deletar um eletrodoméstico pelo id
+
+- Endpoint:
+  ```sh
+  DELETE localhost:8080/appliance/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado e deletado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+           "message": "Appliance deleted successfully"
+         }      
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Appliance not found"
+         }
+        ```
+5. Atualizar Endereço
+
+   Endpoint para atualizar os dados de um eletrodoméstico
+
+- Endpoint:
+  ```sh
+  PUT localhost:8080/address
+  ```
+- Body:
+  ```JSON
+  {
+      "id": 1,
+      "name": "Microondas",
+      "brand": "Electrolux",
+      "model": "MI41S",
+      "power": 2500
+   }
+  ```
+
+- Resposta:
+    1. Caso seja encontrado e atualizado:
+
+       Status Code: **200 Ok**
+        ```JSON
+         {
+           "id": 1,
+           "street": "Avenida Wallace Simonsen",
+           "number": 201,
+           "neighborhood": "Centro",
+           "city": "São Bernardo do Campo",
+           "state": "São Paulo"
+         }     
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+
+       Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Address not found"
+         }
+        ```
