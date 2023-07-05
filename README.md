@@ -11,19 +11,20 @@
         - [Listar todas as pessoas](#listar-todas-as-pessoas)
         - [Buscar pessoa pelo id](#buscar-pessoa-pelo-id)
         - [Atualizar pessoa](#atualizar-pessoa)
-        - [Deletar pessoa](#deletar-pessoa)
+        - [Deletar pessoa](#deletar-pessoa-pelo-id)
     - [API Endereços](#api-endereços)
         - [Cadastro de Endereços](#cadastro-de-endereços)
         - [Listar todos os endereços](#listar-todos-os-endereços)
         - [Buscar endereço pelo id](#buscar-endereço-pelo-id)
         - [Atualizar endereço](#atualizar-endereço)
-        - [Deletar endereço](#deletar-endereço)
+        - [Deletar endereço](#deletar-um-endereço-pelo-id)
     - [API Eletrodomésticos](#api-eletrodomésticos)
         - [Cadastro de Eletrodomésticos](#cadastro-de-eletrodomésticos)
-        - [Listar todos os eletrodomésticos](#listar-todos-os-eletrodomésticos)
+        - [Listar todos os eletrodomésticos](#listar-todas-os-eletrodomésticos-cadastrados)
         - [Buscar eletrodoméstico pelo id](#buscar-eletrodoméstico-pelo-id)
         - [Atualizar eletrodoméstico](#atualizar-eletrodoméstico)
-        - [Deletar eletrodoméstico](#deletar-eletrodoméstico)
+        - [Deletar eletrodoméstico](#deletar-um-eletrodoméstico-pelo-id)
+- [Relatório técnico](#relatório-técnico)
 
 ## Pré-requisitos
 Para rodar o projeto na sua máquina é necessário: 
@@ -55,7 +56,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
 ## Uso
 
 ### API Pessoas
-1. Cadastro de Pessoas
+#### Cadastro de Pessoas
    
    Endpoint para salvar o nome(name), data de nascimento(date_of_birth), genêro(gender) e relacionamento(relationship) de uma pessoa.
    
@@ -84,7 +85,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
           - **PARENT**: (Pais) Representa um dos pais da pessoa.
           - **OWNER**: (Dono) Representa o dono do imovél.
          
-    - Retornos:
+   - Retornos:
         1. Registro salvo com sucesso:
       
             Status Code: **201 Created**
@@ -164,139 +165,139 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
              }
              ```
              
-2. Listar todas as pessoas
+#### Listar todas as pessoas
 
   Endpoint para retornar uma lista de todas as pessoas cadastradas.
    
-   - Endpoint:
-     ```sh
-     GET localhost:8080/person
-     ```
-   - Resposta:
+- Endpoint:
+  ```sh
+  GET localhost:8080/person
+  ```
+- Resposta:
 
-      Status Code: **200 Ok**
-       ```JSON
-       [
-        {
-            "id": 1,
-            "name": "Mayara Lima",
-            "gender": "FEMALE",
-            "relationship": "OWNER",
-            "date_of_birth": "26/08/1994"
-        },
-        {
-             "id": 2,
-             "name": "Luna Lima",
-             "gender": "FEMALE",
-             "relationship": "SIBLING",
-             "date_of_birth": "20/10/2020"
-         }
-        ]
-       ```
-
-3. Buscar pessoa pelo id
-
-  Endpoint para buscar uma pessoa pelo seu id.
-   
-   - Endpoint:
-     ```sh
-     GET localhost:8080/person/{id}
-     ```
-   - Resposta:
-       1. Caso seja encontrado:
-          
-           Status Code: **200 Ok**
-           ```JSON
-            {
-                "id": 1,
-                "name": "Mayara Lima",
-                "gender": "FEMALE",
-                "relationship": "OWNER",
-                "date_of_birth": "26/08/1994"
-            }
-           ```
-
-       2. Se não for encontrado o registro com o id informado:
-          
-           Status Code: **404 Not Found**
-           ```JSON
-            {
-                "error": "Person not found"
-            }
-           ```
-
-4. Deletar pessoa pelo id
-
-  Endpoint para deletar uma pessoa pelo id
-   
-   - Endpoint:
-     ```sh
-     DELETE localhost:8080/person/{id}
-     ```
-   - Resposta:
-       1. Caso seja encontrado e deletado:
-          
-           Status Code: **200 Ok**
-           ```JSON
-            {
-              "message": "Person deleted successfully"
-            }      
-           ```
-
-       2. Se não for encontrado o registro com o id informado:
-          
-           Status Code: **404 Not Found**
-           ```JSON
-            {
-                "error": "Person not found"
-            }
-           ```
-5. Atualizar Pessoa
-
-  Endpoint para atualizar os dados de uma pessoa
-   
-   - Endpoint:
-     ```sh
-     PUT localhost:8080/person
-     ```
-   - Body:
-     ```JSON
+   Status Code: **200 Ok**
+    ```JSON
+    [
      {
          "id": 1,
-         "name": "Mayara Veloso Lima",
-         "date_of_birth":"26/08/1994",
+         "name": "Mayara Lima",
          "gender": "FEMALE",
-         "relationship": "OWNER"
+         "relationship": "OWNER",
+         "date_of_birth": "26/08/1994"
+     },
+     {
+          "id": 2,
+          "name": "Luna Lima",
+          "gender": "FEMALE",
+          "relationship": "SIBLING",
+          "date_of_birth": "20/10/2020"
       }
-     ```
-    
-   - Resposta:
-       1. Caso seja encontrado e atualizado:
-          
-           Status Code: **200 Ok**
-           ```JSON
-            {
-              "id": 1,
-              "name": "Mayara Veloso Lima",
-              "date_of_birth":"26/08/1994",
-              "gender": "FEMALE",
-              "relationship": "OWNER"
-            }     
-           ```
+     ]
+    ```
 
-       2. Se não for encontrado o registro com o id informado:
+#### Buscar pessoa pelo id
+
+Endpoint para buscar uma pessoa pelo seu id.
+   
+- Endpoint:
+  ```sh
+  GET localhost:8080/person/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado:
           
-           Status Code: **404 Not Found**
-           ```JSON
-            {
-                "error": "Person not found"
-            }
-           ```
+        Status Code: **200 Ok**
+        ```JSON
+         {
+             "id": 1,
+             "name": "Mayara Lima",
+             "gender": "FEMALE",
+             "relationship": "OWNER",
+             "date_of_birth": "26/08/1994"
+         }
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+          
+        Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Person not found"
+         }
+        ```
+
+#### Deletar pessoa pelo id
+
+Endpoint para deletar uma pessoa pelo id
+   
+- Endpoint:
+  ```sh
+  DELETE localhost:8080/person/{id}
+  ```
+- Resposta:
+    1. Caso seja encontrado e deletado:
+          
+        Status Code: **200 Ok**
+        ```JSON
+         {
+           "message": "Person deleted successfully"
+         }      
+        ```
+
+    2. Se não for encontrado o registro com o id informado:
+          
+        Status Code: **404 Not Found**
+        ```JSON
+         {
+             "error": "Person not found"
+         }
+        ```
+#### Atualizar Pessoa
+
+Endpoint para atualizar os dados de uma pessoa
+   
+- Endpoint:
+  ```sh
+  PUT localhost:8080/person
+  ```
+- Body:
+  ```JSON
+  {
+      "id": 1,
+      "name": "Mayara Veloso Lima",
+      "date_of_birth":"26/08/1994",
+      "gender": "FEMALE",
+      "relationship": "OWNER"
+   }
+  ```
+    
+  - Resposta:
+      1. Caso seja encontrado e atualizado:
+          
+          Status Code: **200 Ok**
+          ```JSON
+           {
+             "id": 1,
+             "name": "Mayara Veloso Lima",
+             "date_of_birth":"26/08/1994",
+             "gender": "FEMALE",
+             "relationship": "OWNER"
+           }     
+          ```
+
+      2. Se não for encontrado o registro com o id informado:
+          
+          Status Code: **404 Not Found**
+          ```JSON
+           {
+               "error": "Person not found"
+           }
+          ```
 
 ### API Endereços
-1. Cadastro de endereços
+#### Cadastro de endereços
 
-    Endpoint para salvar o rua(street), número(number), complemento(complement), bairro(neighborhood), cidade(city) e estado(state).
+Endpoint para salvar o rua(street), número(number), complemento(complement), bairro(neighborhood), cidade(city) e estado(state).
 
 - Endpoint:
   ```sh
@@ -374,7 +375,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
   
     3. Registro já existe:
 
-          É validado se já existe um registro para o mesmo dados de street, number, complement, neighborhood, city e state.
+          É validado se já existe um registro para com o mesmo "street", "number", "complement", "neighborhood", "city" e "state".
   
           Status Code: **409 Conflict**
           ```JSON
@@ -382,9 +383,9 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
               "error": "This address already exists"
             }
           ```
-2. Listar todos os endereços
+#### Listar todos os endereços
 
-    Endpoint para retornar uma lista de todos os endereços cadastradas.
+Endpoint para retornar uma lista de todos os endereços cadastradas.
 
 - Endpoint:
   ```sh
@@ -416,9 +417,9 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
    ]
     ```
 
-3. Buscar endereço pelo id
 
-    Endpoint para buscar um enderço pelo seu id.
+#### Buscar endereço pelo id
+Endpoint para buscar um enderço pelo seu id.
 
 - Endpoint:
   ```sh
@@ -449,9 +450,9 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
          }
         ```
 
-4. Deletar um endereço pelo id
+#### Deletar um endereço pelo id
 
-    Endpoint para deletar um endereço pelo id
+Endpoint para deletar um endereço pelo id
 
 - Endpoint:
   ```sh
@@ -475,9 +476,9 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
              "error": "Person not found"
          }
         ```
-5. Atualizar Endereço
+#### Atualizar Endereço
 
-    Endpoint para atualizar os dados de um endereço
+Endpoint para atualizar os dados de um endereço
 
 - Endpoint:
   ```sh
@@ -519,10 +520,10 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
          }
         ```
 
-### API Eletrodomésticos 
-1. Cadastro de eletrodomésticos
+### API Eletrodómesticos
+#### Cadastro de eletrodomésticos
 
-   Endpoint para salvar o nome(name), marca(brand), modelo(model)e potência(power) para um equipamento eletrodoméstico
+Endpoint para salvar o nome(name), marca(brand), modelo(model) e potência(power) para um equipamento eletrodoméstico
 
 - Endpoint:
   ```sh
@@ -601,9 +602,9 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
               "error": "This appliance already exists"
             }
           ```
-2. Listar todas os eletrodomésticos cadastrados
+#### Listar todas os eletrodomésticos cadastrados
 
-   Endpoint para retornar uma lista de todos os eletrodomésticos cadastradas.
+Endpoint para retornar uma lista de todos os eletrodomésticos cadastradas.
 
 - Endpoint:
   ```sh
@@ -631,7 +632,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
     ]
     ```
 
-3. Buscar eletrodoméstico pelo id
+#### Buscar eletrodoméstico pelo id
 
    Endpoint para buscar um eletrodoméstico pelo seu id.
 
@@ -662,7 +663,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
          }
         ```
 
-4. Deletar um eletrodoméstico pelo id
+#### Deletar um eletrodoméstico pelo id
 
    Endpoint para deletar um eletrodoméstico pelo id
 
@@ -688,7 +689,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
              "error": "Appliance not found"
          }
         ```
-5. Atualizar Endereço
+#### Atualizar Eletrodoméstico
 
    Endpoint para atualizar os dados de um eletrodoméstico
 
@@ -730,3 +731,21 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
              "error": "Address not found"
          }
         ```
+
+## Relatório Técnico
+No projeto foram utilizados:
+- Java 17: Optei por utilizar a versão mais recente do Java, a versão 17. Escolhi essa versão porque quero atualizar os meus conhecimentos em relação às novas funcionalidades e melhorias introduzidas no Java.
+- Maven: Optei por ser uma ferramenta que já utilizo no meu dia a dia profissional e por ter uma ampla adoção que facilita para encontrar documentações.
+- Spring Boot Starter 3.1.0: Utilizei a versão mais recente do Spring Boot Starter para aproveitar as atualizações e melhorias de segurança disponíveis na época em que o projeto foi criado.
+- Spring Boot Starter Validation: Essa biblioteca do Spring facilitou a validação dos dados no projeto, fornecendo anotações como @NotNull, @Min, @Max, entre outras. Com isso, foi possível realizar a validação dos dados de forma fácil e consistente, sem a necessidade de escrever manualmente a lógica de validação.
+- Lombok: Optei por utilizar a biblioteca Lombok para reduzir a quantidade de código repetitivo, eliminando a necessidade de escrever construtores, getters, setters, equals e hashCode manualmente. Isso tornou o código mais limpo, legível e coeso.
+- Spring Boot Starter Web: Utilizei o Spring Boot Starter Web devido à sua configuração fácil e abrangente para o gerenciamento de solicitações HTTP, roteamento de URL e manipulação de respostas, facilitando o desenvolvimento da API.
+
+A arquitetura escolhida para essa primeira entrega foi a DDD (Domain-Driven Design). Optei por essa arquitetura, pois permite a organização do código em torno de conceitos de domínio, favorecendo a modularidade, reutilização de código e facilitando a compreensão do sistema. Como inicialmente apenas o método HTTP POST seria implementado, não vi a necessidade de criar uma API separada para cada entidade manipulada, mantendo o foco na funcionalidade principal do projeto.
+Optei em adicionar os outros métodos HTTP para deixar a API mais completa e simular uma manipulação de dados mesmo sem utilizar um banco de dados.
+
+Durante o desenvolvimento, alguns desafios foram enfrentados:
+
+- Validação de Dados: Um dos desafios foi garantir que os dados fornecidos pelos usuários da API fossem válidos e estivessem no formato correto. Para isso, foram utilizadas as anotações de validação como @NotNull, @Size, @Pattern, entre outras. Essas anotações foram aplicadas nas entidades de Endereço, Pessoa e Eletrodoméstico, assegurando a integridade dos dados.
+- Enums: Para garantir que o gênero e o relacionamento fornecidos pelos usuários seguissem um padrão, foram criadas classes de enum com os possíveis valores. Além disso, foi implementado o método fromJson, anotado com @JsonCreator, para comparar a string recebida com os possíveis valores do enum ignorando maiúsculas e minúsculas, e assim o código aceitar ambos os formatos.
+- Tratamento de Exceções: Mecanismos de tratamento de exceções foram implementados usando a anotação @ExceptionHandler do Spring. Essa abordagem permitiu informar corretamente os erros de validação, retornando os códigos de status apropriados e mensagens de erro específicas para cada tipo de falha.
