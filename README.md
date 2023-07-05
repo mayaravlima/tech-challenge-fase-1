@@ -1,5 +1,5 @@
 # Pós-Tech Arquitetura e Desenvolvimento Java
-- Fase 1:  Nessa primeira fase o objetivo era criar API para o CRUD de Pessoas, Endereços e Eletrodoméstico focado na integridade dados.
+- Fase 1: Nessa primeira fase o objetivo era criar API para o CRUD de Pessoas, Endereços e Eletrodoméstico focado na integridade dados.
 
 ## Índice
 
@@ -56,6 +56,7 @@ Siga as etapas abaixo para configurar e executar o projeto em seu ambiente local
 ## Uso
 
 ### API Pessoas
+A API de gestão de pessoas tem como objetivo permitir o gerenciamento de informações sobre as pessoas relacionadas aos usuários cadastradas no sistema.
 #### Cadastro de Pessoas
    
    Endpoint para salvar o nome(name), data de nascimento(date_of_birth), genêro(gender) e relacionamento(relationship) de uma pessoa.
@@ -295,6 +296,8 @@ Endpoint para atualizar os dados de uma pessoa
           ```
 
 ### API Endereços
+A API de gestão de endereços tem como objetivo permitir o gerenciamento de informações sobre os endereços cadastrados no sistema.
+
 #### Cadastro de endereços
 
 Endpoint para salvar o rua(street), número(number), complemento(complement), bairro(neighborhood), cidade(city) e estado(state).
@@ -520,7 +523,8 @@ Endpoint para atualizar os dados de um endereço
          }
         ```
 
-### API Eletrodómesticos
+### API Eletrodomésticos
+A API de gestão de eletrodomésticos tem como objetivo permitir o gerenciamento de informações sobre os aparelhos eletrônicos dos usuários cadastradas no sistema.
 #### Cadastro de eletrodomésticos
 
 Endpoint para salvar o nome(name), marca(brand), modelo(model) e potência(power) para um equipamento eletrodoméstico
