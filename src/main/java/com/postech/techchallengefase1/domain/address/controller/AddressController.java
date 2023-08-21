@@ -1,7 +1,9 @@
 package com.postech.techchallengefase1.domain.address.controller;
 
-import com.postech.techchallengefase1.domain.address.service.AddressService;
+import com.postech.techchallengefase1.domain.address.dto.CreateAddressDTO;
+import com.postech.techchallengefase1.domain.address.dto.UpdateAddressDTO;
 import com.postech.techchallengefase1.domain.address.entity.Address;
+import com.postech.techchallengefase1.domain.address.service.AddressService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/address")
@@ -22,12 +23,12 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> save(@Valid @RequestBody Address address) {
+    public ResponseEntity<Address> save(@Valid @RequestBody CreateAddressDTO address) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAddress(address));
     }
 
     @GetMapping
-    public ResponseEntity<Set<Address>> getAll() {
+    public ResponseEntity<List<Address>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAllAddress());
     }
 
@@ -37,7 +38,7 @@ public class AddressController {
     }
 
     @PutMapping
-    public ResponseEntity<Address> update(@Valid @RequestBody Address address) {
+    public ResponseEntity<Address> update(@Valid @RequestBody UpdateAddressDTO address) {
         return ResponseEntity.status(HttpStatus.OK).body(service.updateAddress(address));
     }
 

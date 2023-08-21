@@ -1,14 +1,16 @@
 package com.postech.techchallengefase1.domain.person.controller;
 
-import com.postech.techchallengefase1.domain.person.service.PersonService;
+import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
+import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.person.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/person")
@@ -21,12 +23,12 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<Person> save(@Valid @RequestBody Person person) {
+    public ResponseEntity<Person> save(@Valid @RequestBody CreatePersonDTO person) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.savePerson(person));
     }
 
     @GetMapping
-    public ResponseEntity<Set<Person>> getAll() {
+    public ResponseEntity<List<Person>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAllPerson());
     }
 
@@ -36,7 +38,7 @@ public class PersonController {
     }
 
     @PutMapping
-    public ResponseEntity<Person> update(@Valid @RequestBody Person person) {
+    public ResponseEntity<Person> update(@Valid @RequestBody UpdatePersonDTO person) {
         return ResponseEntity.status(HttpStatus.OK).body(service.updatePerson(person));
     }
 

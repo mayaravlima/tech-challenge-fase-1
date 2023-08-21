@@ -1,13 +1,8 @@
 package com.postech.techchallengefase1.domain.person.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.postech.techchallengefase1.domain.person.enuns.Gender;
 import com.postech.techchallengefase1.domain.person.enuns.Relationship;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,24 +12,25 @@ import java.time.LocalDate;
 @EqualsAndHashCode(exclude = {"id", "relationship", "gender"})
 @Getter
 @Setter
+@Entity
+@Table(name = "person")
 public class Person {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "Name can't be empty or null")
-    @Pattern(regexp = "[a-zA-Z\\s-]+", message = "Name must contain only letters, spaces, or hyphens")
-    @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @NotNull(message = "Date of birth name can't be empty or null")
-    @Past(message = "Date of birth must be in the past")
-    @JsonProperty("date_of_birth")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
+    @Column(name = "gender")
     private Gender gender;
 
-    @NotNull(message = "Relationship can't be empty or null")
+    @Column(name = "relationship", nullable = false)
     private Relationship relationship;
 
 }
