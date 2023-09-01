@@ -5,6 +5,7 @@ import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.entity.Person;
 import com.postech.techchallengefase1.domain.person.service.PersonService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/person")
 public class PersonController {
 
     private final PersonService service;
 
-    public PersonController(PersonService service) {
-        this.service = service;
-    }
-
     @PostMapping
-    public ResponseEntity<Person> save(@Valid @RequestBody CreatePersonDTO person) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.savePerson(person));
+    public ResponseEntity<Person> save(@Valid @RequestBody CreatePersonDTO person, @RequestHeader String username) {
+        Person persont = service.savePerson(person, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(persont);
     }
 
     @GetMapping

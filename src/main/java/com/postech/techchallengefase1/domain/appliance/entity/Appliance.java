@@ -1,5 +1,8 @@
 package com.postech.techchallengefase1.domain.appliance.entity;
 
+import com.postech.techchallengefase1.domain.property.entity.Property;
+import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,4 +29,12 @@ public class Appliance {
 
     @Column(name = "power", nullable = false)
     private Long power;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name="property_id", nullable=false)
+    private Property property;
 }

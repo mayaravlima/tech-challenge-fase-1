@@ -1,5 +1,6 @@
 package com.postech.techchallengefase1.domain.address.entity;
 
+import com.postech.techchallengefase1.domain.property.entity.Property;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,4 +35,7 @@ public class Address {
 
     @Column(name = "state", nullable = false)
     private String state;
+
+    @OneToOne(mappedBy = "address")
+    private Property property;
 }

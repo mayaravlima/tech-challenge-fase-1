@@ -5,6 +5,8 @@ import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
 import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.entity.Person;
 import com.postech.techchallengefase1.domain.person.repository.PersonRepository;
+import com.postech.techchallengefase1.domain.user.entity.User;
+import com.postech.techchallengefase1.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,16 @@ import java.util.List;
 public class PersonService {
     private final PersonRepository personRepository;
 
-    public Person savePerson(CreatePersonDTO person) {
-        Person newPerson = personRepository.save(person.getPerson());
+    private final UserRepository userRepository;
+
+    public Person savePerson(CreatePersonDTO person, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ApiException("User not found", HttpStatus.NOT_FOUND.value()));
+
+        Person personToSave = person.getPerson();
+        personToSave.setUser(user);
+
+        Person newPerson = personRepository.save(personToSave);
         if (newPerson.getId() == null) {
             throw new ApiException("Person already exists", HttpStatus.CONFLICT.value());
         }

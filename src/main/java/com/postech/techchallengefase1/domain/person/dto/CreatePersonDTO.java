@@ -38,6 +38,8 @@ public class CreatePersonDTO {
     @NotNull(message = "Relationship can't be empty or null")
     private Relationship relationship;
 
+    private Long userId;
+
     public Person getPerson() {
         Person person = new Person();
         person.setName(this.name);
