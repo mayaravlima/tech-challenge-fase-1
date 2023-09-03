@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 
@@ -27,6 +28,10 @@ public class CreatePersonDTO {
     @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
     private String name;
 
+    @NotNull(message = "CPF can't be empty or null")
+    @CPF(message = "Invalid CPF")
+    private String cpf;
+
     @NotNull(message = "Date of birth name can't be empty or null")
     @Past(message = "Date of birth must be in the past")
     @JsonProperty("date_of_birth")
@@ -38,14 +43,13 @@ public class CreatePersonDTO {
     @NotNull(message = "Relationship can't be empty or null")
     private Relationship relationship;
 
-    private Long userId;
-
     public Person getPerson() {
-        Person person = new Person();
-        person.setName(this.name);
-        person.setDateOfBirth(this.dateOfBirth);
-        person.setGender(this.gender);
-        person.setRelationship(this.relationship);
-        return person;
+        return Person.builder()
+                .name(this.name)
+                .cpf(this.cpf)
+                .dateOfBirth(this.dateOfBirth)
+                .gender(this.gender)
+                .relationship(this.relationship)
+                .build();
     }
 }

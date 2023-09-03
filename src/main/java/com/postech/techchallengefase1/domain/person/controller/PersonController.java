@@ -1,8 +1,8 @@
 package com.postech.techchallengefase1.domain.person.controller;
 
 import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
+import com.postech.techchallengefase1.domain.person.dto.PersonWithUserDTO;
 import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
-import com.postech.techchallengefase1.domain.person.entity.Person;
 import com.postech.techchallengefase1.domain.person.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,24 +21,44 @@ public class PersonController {
     private final PersonService service;
 
     @PostMapping
-    public ResponseEntity<Person> save(@Valid @RequestBody CreatePersonDTO person, @RequestHeader String username) {
-        Person persont = service.savePerson(person, username);
-        return ResponseEntity.status(HttpStatus.CREATED).body(persont);
+    public ResponseEntity<PersonWithUserDTO> save(@Valid @RequestBody CreatePersonDTO person, @RequestHeader String username) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.savePerson(person, username));
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAll() {
+    public ResponseEntity<List<PersonWithUserDTO>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAllPerson());
     }
 
+    @GetMapping("/search/name/{name}")
+    public ResponseEntity<List<PersonWithUserDTO>> searchByName(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getPersonByName(name));
+    }
+
+    @GetMapping("/search/relationship/{relationship}")
+    public ResponseEntity<List<PersonWithUserDTO>> searchByRelationship(@PathVariable String relationship) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getPersonByRelationship(relationship));
+    }
+
+    @GetMapping("/search/gender/{gender}")
+    public ResponseEntity<List<PersonWithUserDTO>> searchByGender(@PathVariable String gender) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getPersonByGender(gender));
+    }
+
+    @GetMapping("/search/cpf/{cpf}")
+    public ResponseEntity<List<PersonWithUserDTO>> searchByCpf(@PathVariable String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getPersonByCpf(cpf));
+    }
+
+
     @GetMapping("/{id}")
-    public ResponseEntity<Person> getById(@PathVariable Long id) {
+    public ResponseEntity<PersonWithUserDTO> getById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getPersonById(id));
     }
 
-    @PutMapping
-    public ResponseEntity<Person> update(@Valid @RequestBody UpdatePersonDTO person) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updatePerson(person));
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonWithUserDTO> update(@Valid @RequestBody UpdatePersonDTO person, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updatePerson(person, id));
     }
 
     @DeleteMapping("/{id}")

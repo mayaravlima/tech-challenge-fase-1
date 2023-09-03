@@ -21,13 +21,4 @@ public class Property {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
-    private Address address;
-
-    @OneToMany(mappedBy = "property")
-    private Set<User> users;
-
-    @OneToMany(mappedBy = "property")
-    private Set<Appliance> appliancesses;
 }

@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,15 +31,15 @@ public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleJsonErrors(HttpMessageNotReadableException error)  {
-        Map<String,String> errorResponse = Map.of("error", "Invalid JSON");
-        if(error.getMessage().contains("Relationship")) {
-             errorResponse = Map.of("error", "Relationship must be one of the values accepted: [OWNER, " +
-                      "PARENT," +
-                      "SPOUSE, " +
-                      "SIBLING, " +
-                      "PARTNER, " +
-                      "RELATIVE]");
+    public ResponseEntity<Map<String, String>> handleJsonErrors(HttpMessageNotReadableException error) {
+        Map<String, String> errorResponse = Map.of("error", "Invalid JSON");
+        if (error.getMessage().contains("Relationship")) {
+            errorResponse = Map.of("error", "Relationship must be one of the values accepted: [" +
+                    "PARENT," +
+                    "SPOUSE, " +
+                    "SIBLING, " +
+                    "PARTNER, " +
+                    "RELATIVE]");
         } else if (error.getMessage().contains("Gender")) {
             errorResponse = Map.of("error", "Gender must be one of the values accepted: [FEMALE, MALE]");
         }
@@ -50,7 +48,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<Map<String, String>> handleDataError(ApiException error){
+    public ResponseEntity<Map<String, String>> handleDataError(ApiException error) {
         return ResponseEntity.status(error.getStatus()).body(Map.of("error", error.getMessage()));
 
     }

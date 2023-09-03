@@ -30,11 +30,4 @@ public class Appliance {
     @Column(name = "power", nullable = false)
     private Long power;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name="property_id", nullable=false)
-    private Property property;
 }
