@@ -1,6 +1,5 @@
 package com.postech.techchallengefase1.domain.appliance.dto;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -14,9 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateApplianceDTO {
 
-    @NotNull(message = "Id can't be null")
-    @Positive(message = "Id must be more than 0")
-    private Long id;
 
     @Size(min = 2, max = 50, message = "Name must be between 3 and 50 characters")
     private String name;

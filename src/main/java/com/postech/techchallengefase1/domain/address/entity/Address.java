@@ -12,7 +12,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "address")
 public class Address {
@@ -55,6 +54,5 @@ public class Address {
             fetch = FetchType.EAGER,
             orphanRemoval = true)
     private Set<Appliance> appliances;
-
 
 }

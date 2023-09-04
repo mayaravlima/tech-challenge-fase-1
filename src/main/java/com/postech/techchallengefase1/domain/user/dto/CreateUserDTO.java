@@ -19,8 +19,8 @@ import java.time.LocalDate;
 public class CreateUserDTO {
 
     @NotNull(message = "Username can't be empty or null")
-    @Pattern(regexp = "[a-zA-Z\\s-]+", message = "Username must contain only letters, spaces, or hyphens")
-    @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]+$", message = "Username must contain only letters, spaces, hyphens or underscore")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
     @NotNull(message = "Email can't be empty or null")

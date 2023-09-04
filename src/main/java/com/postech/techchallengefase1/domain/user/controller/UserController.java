@@ -2,7 +2,7 @@ package com.postech.techchallengefase1.domain.user.controller;
 
 import com.postech.techchallengefase1.domain.user.dto.CreateUserDTO;
 import com.postech.techchallengefase1.domain.user.dto.UpdateUserDTO;
-import com.postech.techchallengefase1.domain.user.dto.UserWithPersonsDTO;
+import com.postech.techchallengefase1.domain.user.dto.UserResponseDTO;
 import com.postech.techchallengefase1.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,23 +21,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserWithPersonsDTO> saveUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(createUserDTO));
+    public ResponseEntity<UserResponseDTO> saveUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(createUserDTO));
     }
 
     @GetMapping("/search")
-    public UserWithPersonsDTO getUserByParams(@RequestParam(required = false) String username,
-                                              @RequestParam(required = false) String email) {
+    public UserResponseDTO getUserByParams(@RequestParam(required = false) String username,
+                                           @RequestParam(required = false) String email) {
         return userService.getUserWithParams(username, email);
     }
 
     @GetMapping
-    public List<UserWithPersonsDTO> getAllUser() {
+    public List<UserResponseDTO> getAllUser() {
         return userService.getAllUser();
     }
 
     @GetMapping("/{id}")
-    public UserWithPersonsDTO getUserById(@PathVariable Long id) {
+    public UserResponseDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserWithPersonsDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, updateUserDTO));
     }
 

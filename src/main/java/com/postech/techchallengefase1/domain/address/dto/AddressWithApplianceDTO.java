@@ -14,26 +14,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressWithApplianceDTO {
-
     private AddressDTO address;
-    private Set<ApplianceDTO> appliances;
+    private Set<ApplianceDTO> appliance;
 
     public static AddressWithApplianceDTO toDto(Address address) {
-        Set<ApplianceDTO> appliances = address.getAppliances().stream()
-                .map(appliance -> new ApplianceDTO(
-                        appliance.getName(),
-                        appliance.getModel(),
-                        appliance.getBrand(),
-                        appliance.getPower()))
-                .collect(java.util.stream.Collectors.toSet());
-        return new AddressWithApplianceDTO(new AddressDTO(address.getId(),
-                address.getStreet(),
-                address.getNumber(),
-                address.getComplement(),
-                address.getNeighborhood(),
-                address.getCity(),
-                address.getState(),
-                address.getZipCode()),
-                appliances);
+        return new AddressWithApplianceDTO(
+                AddressDTO.toDTO(address),
+                address.getAppliances().stream().map(ApplianceDTO::toDTO).collect(java.util.stream.Collectors.toSet())
+        );
     }
 }

@@ -1,9 +1,11 @@
 package com.postech.techchallengefase1.domain.appliance.service;
 
+import com.postech.techchallengefase1.domain.address.dto.AddressWithPersonDTO;
 import com.postech.techchallengefase1.domain.appliance.dto.*;
 import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
 import com.postech.techchallengefase1.domain.appliance.repository.ApplianceRepository;
 import com.postech.techchallengefase1.domain.exception.ApiException;
+import com.postech.techchallengefase1.domain.user.dto.UserDTO;
 import com.postech.techchallengefase1.domain.user.entity.User;
 import com.postech.techchallengefase1.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,15 @@ public class ApplianceService {
 
     private final UserRepository userRepository;
 
-    public ApplianceWithUserDTO saveAppliance(CreateApplianceDTO createApplianceDTO, String username) {
+    private ApplianceResponseDTO createApplianceDTO(Appliance appliance) {
+        return new ApplianceResponseDTO(
+                ApplianceDTO.toDTO(appliance),
+                UserDTO.toDTO(appliance.getUser()),
+                new AddressWithPersonDTO()
+        );
+    }
+
+    public ApplianceResponseDTO saveAppliance(CreateApplianceDTO createApplianceDTO, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ApiException("User not found", HttpStatus.NOT_FOUND.value()));
 
@@ -29,47 +39,47 @@ public class ApplianceService {
 
         applianceRepository.save(appliance);
 
-        return ApplianceWithUserDTO.toDto(appliance);
+        return createApplianceDTO(appliance);
     }
 
-    public List<ApplianceWithUserAndAddressDTO> getAllAppliance() {
+    public List<ApplianceResponseDTO> getAllAppliance() {
         List<Appliance> appliances = applianceRepository.findAll();
 
         if (appliances.isEmpty()) {
             throw new ApiException("Appliances not found", HttpStatus.NOT_FOUND.value());
         }
 
-        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+        return appliances.stream().map(ApplianceResponseDTO::toDto).toList();
     }
 
-    public ApplianceWithUserAndAddressDTO getApplianceById(Long id) {
+    public ApplianceResponseDTO getApplianceById(Long id) {
         Appliance appliance = applianceRepository.findById(id).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
-        return ApplianceWithUserAndAddressDTO.toDto(appliance);
+        return ApplianceResponseDTO.toDto(appliance);
     }
 
-    public List<ApplianceWithUserAndAddressDTO> getApplianceByName(String name) {
-        List<Appliance> appliances = applianceRepository.findByName(name).orElseThrow(() ->
+    public List<ApplianceResponseDTO> getApplianceByName(String name) {
+        List<Appliance> appliances = applianceRepository.findByNameContainingIgnoreCase(name).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
-        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+        return appliances.stream().map(ApplianceResponseDTO::toDto).toList();
     }
 
-    public List<ApplianceWithUserAndAddressDTO> getApplianceByBrand(String brand) {
-        List<Appliance> appliances = applianceRepository.findByBrand(brand).orElseThrow(() ->
+    public List<ApplianceResponseDTO> getApplianceByBrand(String brand) {
+        List<Appliance> appliances = applianceRepository.findByBrandContainingIgnoreCase(brand).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
-        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+        return appliances.stream().map(ApplianceResponseDTO::toDto).toList();
     }
 
-    public List<ApplianceWithUserAndAddressDTO> getApplianceByModel(String model) {
-        List<Appliance> appliances = applianceRepository.findByModel(model).orElseThrow(() ->
+    public List<ApplianceResponseDTO> getApplianceByModel(String model) {
+        List<Appliance> appliances = applianceRepository.findByModelContainingIgnoreCase(model).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
-        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+        return appliances.stream().map(ApplianceResponseDTO::toDto).toList();
     }
 
-    public List<ApplianceWithUserAndAddressDTO> getApplianceByPower(Long power) {
+    public List<ApplianceResponseDTO> getApplianceByPower(Long power) {
         List<Appliance> appliances = applianceRepository.findByPower(power).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
-        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+        return appliances.stream().map(ApplianceResponseDTO::toDto).toList();
     }
 
     public void deleteApplianceById(Long id) {
@@ -79,15 +89,7 @@ public class ApplianceService {
         applianceRepository.deleteById(id);
     }
 
-    private String updateIfNotNull(String newValue, String currentValue) {
-        return newValue != null ? newValue : currentValue;
-    }
-
-    private Long updateIfNotNull(Long newValue, Long currentValue) {
-        return newValue != null ? newValue : currentValue;
-    }
-
-    public ApplianceWithUserAndAddressDTO updateAppliance(UpdateApplianceDTO updateApplianceDTO, Long id) {
+    public ApplianceResponseDTO updateAppliance(UpdateApplianceDTO updateApplianceDTO, Long id) {
         Appliance appliance = applianceRepository.findById(id).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
 
@@ -106,14 +108,14 @@ public class ApplianceService {
 
         applianceRepository.save(appliance);
 
-        return ApplianceWithUserAndAddressDTO.toDto(appliance);
+        return ApplianceResponseDTO.toDto(appliance);
     }
 
     public String calculateEnergyConsumption(CalculateConsumptionRequest request) {
-        Appliance appliance = applianceRepository.findById(request.getApplicationId()).orElseThrow(() ->
+        Appliance appliance = applianceRepository.findById(request.getApplianceId()).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
 
         double energyConsumption = (appliance.getPower() * request.getHoursOfUse()) / 1000.0;
-        return "Energy consumption: " + energyConsumption + " kWh";
+        return energyConsumption + " kWh";
     }
 }

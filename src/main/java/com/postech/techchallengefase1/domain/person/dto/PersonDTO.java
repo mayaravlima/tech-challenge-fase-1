@@ -1,6 +1,7 @@
 package com.postech.techchallengefase1.domain.person.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.postech.techchallengefase1.domain.person.entity.Person;
 import com.postech.techchallengefase1.domain.person.enuns.Gender;
 import com.postech.techchallengefase1.domain.person.enuns.Relationship;
 import lombok.AllArgsConstructor;
@@ -20,4 +21,13 @@ public class PersonDTO {
     private LocalDate dateOfBirth;
     private Gender gender;
     private Relationship relationship;
+
+    public static PersonDTO toDTO(Person person) {
+        return new PersonDTO(person.getId(),
+                person.getName(),
+                person.getCpf(),
+                person.getDateOfBirth(),
+                person.getGender(),
+                person.getRelationship());
+    }
 }

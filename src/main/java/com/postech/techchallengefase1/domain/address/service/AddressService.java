@@ -1,21 +1,23 @@
 package com.postech.techchallengefase1.domain.address.service;
 
-import com.postech.techchallengefase1.domain.address.dto.*;
+import com.postech.techchallengefase1.domain.address.dto.AddressDTO;
+import com.postech.techchallengefase1.domain.address.dto.AddressResponseDTO;
+import com.postech.techchallengefase1.domain.address.dto.CreateAddressDTO;
+import com.postech.techchallengefase1.domain.address.dto.UpdateAddressDTO;
 import com.postech.techchallengefase1.domain.address.entity.Address;
 import com.postech.techchallengefase1.domain.address.repository.AddressRepository;
 import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
+import com.postech.techchallengefase1.domain.appliance.repository.ApplianceRepository;
 import com.postech.techchallengefase1.domain.exception.ApiException;
 import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.user.dto.UserDTO;
 import com.postech.techchallengefase1.domain.user.entity.User;
 import com.postech.techchallengefase1.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +27,19 @@ public class AddressService {
 
     private final UserRepository userRepository;
 
-    public AddressWithUserDTO saveAddress(CreateAddressDTO createAddressDTO, String username) {
+    private final ApplianceRepository applianceRepository;
+
+
+    private AddressResponseDTO createAddressResponse(Address address, User user) {
+        return new AddressResponseDTO(
+                AddressDTO.toDTO(address),
+                UserDTO.toDTO(user),
+                new HashSet<>(),
+                new HashSet<>()
+        );
+    }
+
+    public AddressResponseDTO saveAddress(CreateAddressDTO createAddressDTO, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ApiException("User not found", HttpStatus.NOT_FOUND.value()));
 
@@ -34,10 +48,10 @@ public class AddressService {
 
         addressRepository.save(address);
 
-        return AddressWithUserDTO.toDTO(address);
+        return createAddressResponse(address, user);
     }
 
-    public AddressWithApplianceDTO associateApplianceWithAddress(
+    public AddressResponseDTO associateApplianceWithAddress(
             String username,
             Long addressId,
             Long applianceId) {
@@ -54,55 +68,55 @@ public class AddressService {
                 .orElseThrow(() -> new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
 
         address.getAppliances().add(appliance);
+        appliance.setAddress(address);
 
-        addressRepository.save(address);
+        applianceRepository.save(appliance);
 
-        return AddressWithApplianceDTO.toDto(address);
+        return AddressResponseDTO.toDto(address);
     }
 
-
-    public List<AddressWithUserAndPersonDTO> getAllAddress() {
+    public List<AddressResponseDTO> getAllAddress() {
         List<Address> addresses = addressRepository.findAll();
 
         if (addresses.isEmpty()) {
             throw new ApiException("Addresses not found", HttpStatus.NOT_FOUND.value());
         }
 
-        return addresses.stream().map(AddressWithUserAndPersonDTO::toDTO).toList();
+        return addresses.stream().map(AddressResponseDTO::toDto).toList();
     }
 
-    public AddressWithUserAndPersonDTO getAddressById(Long id) {
+    public AddressResponseDTO getAddressById(Long id) {
         Address address = addressRepository.findById(id).orElseThrow(() ->
                 new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
-        return AddressWithUserAndPersonDTO.toDTO(address);
+        return AddressResponseDTO.toDto(address);
     }
 
-    public List<AddressWithUserAndPersonDTO> getAddressByStreet(String street) {
-        List<Address> addresses = addressRepository.findByStreet(street).orElseThrow(() ->
+    public List<AddressResponseDTO> getAddressByStreet(String street) {
+        List<Address> addresses = addressRepository.findByStreetContainingIgnoreCase(street).orElseThrow(() ->
                 new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
 
-        return addresses.stream().map(AddressWithUserAndPersonDTO::toDTO).toList();
+        return addresses.stream().map(AddressResponseDTO::toDto).toList();
     }
 
-    public List<AddressWithUserAndPersonDTO> getAddressByNeighborhood(String neighborhood) {
-        List<Address> addresses = addressRepository.findByNeighborhood(neighborhood).orElseThrow(() ->
+    public List<AddressResponseDTO> getAddressByNeighborhood(String neighborhood) {
+        List<Address> addresses = addressRepository.findByNeighborhoodContainingIgnoreCase(neighborhood).orElseThrow(() ->
                 new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
 
-        return addresses.stream().map(AddressWithUserAndPersonDTO::toDTO).toList();
+        return addresses.stream().map(AddressResponseDTO::toDto).toList();
     }
 
-    public List<AddressWithUserAndPersonDTO> getAddressByCity(String city) {
-        List<Address> addresses = addressRepository.findByCity(city).orElseThrow(() ->
+    public List<AddressResponseDTO> getAddressByCity(String city) {
+        List<Address> addresses = addressRepository.findByCityContainingIgnoreCase(city).orElseThrow(() ->
                 new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
 
-        return addresses.stream().map(AddressWithUserAndPersonDTO::toDTO).toList();
+        return addresses.stream().map(AddressResponseDTO::toDto).toList();
     }
 
-    public List<AddressWithUserAndPersonDTO> getAddressByState(String state) {
-        List<Address> addresses = addressRepository.findByState(state).orElseThrow(() ->
+    public List<AddressResponseDTO> getAddressByState(String state) {
+        List<Address> addresses = addressRepository.findByStateContainingIgnoreCase(state).orElseThrow(() ->
                 new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
 
-        return addresses.stream().map(AddressWithUserAndPersonDTO::toDTO).toList();
+        return addresses.stream().map(AddressResponseDTO::toDto).toList();
     }
 
 
@@ -121,7 +135,7 @@ public class AddressService {
         }
     }
 
-    public AddressWithUserAndPersonDTO updateAddress(UpdateAddressDTO updateAddressDTO, Long id) {
+    public AddressResponseDTO updateAddress(UpdateAddressDTO updateAddressDTO, Long id) {
         Address address = addressRepository.findById(id).orElseThrow(() -> new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
 
         if (updateAddressDTO.getStreet() != null) {
@@ -148,7 +162,7 @@ public class AddressService {
 
         addressRepository.save(address);
 
-        return AddressWithUserAndPersonDTO.toDTO(address);
+        return AddressResponseDTO.toDto(address);
     }
 
 }

@@ -1,6 +1,9 @@
 package com.postech.techchallengefase1.domain.appliance.controller;
 
-import com.postech.techchallengefase1.domain.appliance.dto.*;
+import com.postech.techchallengefase1.domain.appliance.dto.ApplianceResponseDTO;
+import com.postech.techchallengefase1.domain.appliance.dto.CalculateConsumptionRequest;
+import com.postech.techchallengefase1.domain.appliance.dto.CreateApplianceDTO;
+import com.postech.techchallengefase1.domain.appliance.dto.UpdateApplianceDTO;
 import com.postech.techchallengefase1.domain.appliance.service.ApplianceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,42 +24,42 @@ public class ApplianceController {
     }
 
     @PostMapping
-    public ResponseEntity<ApplianceWithUserDTO> save(@Valid @RequestBody CreateApplianceDTO appliance, @RequestHeader String username) {
+    public ResponseEntity<ApplianceResponseDTO> save(@Valid @RequestBody CreateApplianceDTO appliance, @RequestHeader String username) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAppliance(appliance, username));
     }
 
     @GetMapping
-    public ResponseEntity<List<ApplianceWithUserAndAddressDTO>> getAll() {
+    public ResponseEntity<List<ApplianceResponseDTO>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAllAppliance());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplianceWithUserAndAddressDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ApplianceResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getApplianceById(id));
     }
 
     @GetMapping("/search/brand/{brand}")
-    public ResponseEntity<List<ApplianceWithUserAndAddressDTO>> searchByBrand(@PathVariable String brand) {
+    public ResponseEntity<List<ApplianceResponseDTO>> searchByBrand(@PathVariable String brand) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getApplianceByBrand(brand));
     }
 
     @GetMapping("/search/model/{model}")
-    public ResponseEntity<List<ApplianceWithUserAndAddressDTO>> searchByModel(@PathVariable String model) {
+    public ResponseEntity<List<ApplianceResponseDTO>> searchByModel(@PathVariable String model) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getApplianceByModel(model));
     }
 
     @GetMapping("/search/name/{name}")
-    public ResponseEntity<List<ApplianceWithUserAndAddressDTO>> searchByName(@PathVariable String name) {
+    public ResponseEntity<List<ApplianceResponseDTO>> searchByName(@PathVariable String name) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getApplianceByName(name));
     }
 
     @GetMapping("/search/power/{power}")
-    public ResponseEntity<List<ApplianceWithUserAndAddressDTO>> searchByPower(@PathVariable Long power) {
+    public ResponseEntity<List<ApplianceResponseDTO>> searchByPower(@PathVariable Long power) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getApplianceByPower(power));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplianceWithUserAndAddressDTO> update(@Valid @RequestBody UpdateApplianceDTO appliance, @PathVariable Long id) {
+    public ResponseEntity<ApplianceResponseDTO> update(@Valid @RequestBody UpdateApplianceDTO appliance, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.updateAppliance(appliance, id));
     }
 
@@ -67,8 +70,8 @@ public class ApplianceController {
     }
 
     @GetMapping("/calculate")
-    public ResponseEntity<String> calculate(@RequestBody CalculateConsumptionRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.calculateEnergyConsumption(request));
+    public ResponseEntity<Map<String, String>> calculate(@RequestBody CalculateConsumptionRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("Energy consumption", service.calculateEnergyConsumption(request)));
     }
 
 }

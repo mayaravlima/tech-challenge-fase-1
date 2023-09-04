@@ -10,11 +10,11 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
-    Optional<List<Address>> findByStreet(String street);
+    Optional<List<Address>> findByStreetContainingIgnoreCase(String street);
 
-    Optional<List<Address>> findByNeighborhood(String neighborhood);
+    Optional<List<Address>> findByNeighborhoodContainingIgnoreCase(String neighborhood);
 
-    Optional<List<Address>> findByCity(String city);
+    Optional<List<Address>> findByCityContainingIgnoreCase(String city);
 
-    Optional<List<Address>> findByState(String state);
+    Optional<List<Address>> findByStateContainingIgnoreCase(String state);
 }

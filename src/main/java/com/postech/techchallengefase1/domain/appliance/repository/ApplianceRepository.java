@@ -9,11 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface ApplianceRepository extends JpaRepository<Appliance, Long> {
-    Optional<List<Appliance>> findByName(String name);
+    Optional<List<Appliance>> findByNameContainingIgnoreCase(String name);
 
-    Optional<List<Appliance>> findByBrand(String brand);
+    Optional<List<Appliance>> findByBrandContainingIgnoreCase(String brand);
 
-    Optional<List<Appliance>> findByModel(String model);
+    Optional<List<Appliance>> findByModelContainingIgnoreCase(String model);
 
     Optional<List<Appliance>> findByPower(Long power);
 }

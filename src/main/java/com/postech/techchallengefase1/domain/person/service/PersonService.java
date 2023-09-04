@@ -3,13 +3,14 @@ package com.postech.techchallengefase1.domain.person.service;
 import com.postech.techchallengefase1.domain.address.entity.Address;
 import com.postech.techchallengefase1.domain.exception.ApiException;
 import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
-import com.postech.techchallengefase1.domain.person.dto.PersonWithAddressDTO;
-import com.postech.techchallengefase1.domain.person.dto.PersonWithUserDTO;
+import com.postech.techchallengefase1.domain.person.dto.PersonDTO;
+import com.postech.techchallengefase1.domain.person.dto.PersonResponseDTO;
 import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.entity.Person;
 import com.postech.techchallengefase1.domain.person.enuns.Gender;
 import com.postech.techchallengefase1.domain.person.enuns.Relationship;
 import com.postech.techchallengefase1.domain.person.repository.PersonRepository;
+import com.postech.techchallengefase1.domain.user.dto.UserDTO;
 import com.postech.techchallengefase1.domain.user.entity.User;
 import com.postech.techchallengefase1.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,7 +51,26 @@ public class PersonService {
         }
     }
 
-    public PersonWithUserDTO savePerson(CreatePersonDTO createPersonDTO, String username) {
+    private Person createPerson(CreatePersonDTO createPersonDTO, User user) {
+        Person person = new Person();
+        person.setName(createPersonDTO.getName());
+        person.setCpf(createPersonDTO.getCpf());
+        person.setDateOfBirth(createPersonDTO.getDateOfBirth());
+        person.setGender(createPersonDTO.getGender());
+        person.setRelationship(createPersonDTO.getRelationship());
+        person.setUser(user);
+        return person;
+    }
+
+    private PersonResponseDTO createPersonResponse(User user, Person person) {
+        return new PersonResponseDTO(
+                PersonDTO.toDTO(person),
+                UserDTO.toDTO(user),
+                new HashSet<>()
+        );
+    }
+
+    public PersonResponseDTO savePerson(CreatePersonDTO createPersonDTO, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ApiException("User not found", HttpStatus.NOT_FOUND.value()));
 
@@ -64,24 +85,18 @@ public class PersonService {
             case SPOUSE -> checkSpouseRelationship(user);
         }
 
-        Person person = new Person();
-        person.setName(createPersonDTO.getName());
-        person.setCpf(createPersonDTO.getCpf());
-        person.setDateOfBirth(createPersonDTO.getDateOfBirth());
-        person.setGender(createPersonDTO.getGender());
-        person.setRelationship(createPersonDTO.getRelationship());
-        person.setUser(user);
+        Person person = createPerson(createPersonDTO, user);
 
         try {
             personRepository.save(person);
-            return PersonWithUserDTO.toDTO(person);
+            return createPersonResponse(user, person);
         } catch (DataIntegrityViolationException e) {
             throw new ApiException("CPF already registered", HttpStatus.CONFLICT.value());
         }
 
     }
 
-    public PersonWithAddressDTO associateAddressWithPerson(String username, Long personId, Long addressId) {
+    public PersonResponseDTO associateAddressWithPerson(String username, Long personId, Long addressId) {
 
         Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new ApiException("Person not found", HttpStatus.NOT_FOUND.value()));
@@ -99,65 +114,65 @@ public class PersonService {
 
         personRepository.save(person);
 
-        return PersonWithAddressDTO.toDto(person);
+        return PersonResponseDTO.toDto(person);
     }
 
-    public List<PersonWithUserDTO> getAllPerson() {
+    public List<PersonResponseDTO> getAllPerson() {
         List<Person> persons = personRepository.findAll();
 
         if (persons.isEmpty()) {
             throw new ApiException("No person found", HttpStatus.NOT_FOUND.value());
         }
 
-        return persons.stream().map(PersonWithUserDTO::toDTO).toList();
+        return persons.stream().map(PersonResponseDTO::toDto).toList();
     }
 
-    public List<PersonWithUserDTO> getPersonByName(String name) {
-        List<Person> persons = personRepository.findByName(name).orElseThrow(() ->
+    public List<PersonResponseDTO> getPersonByName(String name) {
+        List<Person> persons = personRepository.findByNameContainingIgnoreCase(name).orElseThrow(() ->
                 new ApiException("No person found", HttpStatus.NOT_FOUND.value()));
 
-        return persons.stream().map(PersonWithUserDTO::toDTO).toList();
+        return persons.stream().map(PersonResponseDTO::toDto).toList();
 
     }
 
-    public List<PersonWithUserDTO> getPersonByRelationship(String relationship) {
+    public List<PersonResponseDTO> getPersonByRelationship(String relationship) {
         try {
             Relationship convertedRelationship = Relationship.valueOf(relationship.toUpperCase());
             List<Person> persons = personRepository.findByRelationship(convertedRelationship).orElseThrow(() ->
                     new ApiException("No person found", HttpStatus.NOT_FOUND.value()));
 
-            return persons.stream().map(PersonWithUserDTO::toDTO).toList();
+            return persons.stream().map(PersonResponseDTO::toDto).toList();
         } catch (IllegalArgumentException e) {
             throw new ApiException("Invalid relationship", HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    public List<PersonWithUserDTO> getPersonByGender(String gender) {
+    public List<PersonResponseDTO> getPersonByGender(String gender) {
         try {
             Gender convertedGender = Gender.valueOf(gender.toUpperCase());
             List<Person> persons = personRepository.findByGender(convertedGender).orElseThrow(() ->
                     new ApiException("No person found", HttpStatus.NOT_FOUND.value()));
 
-            return persons.stream().map(PersonWithUserDTO::toDTO).toList();
+            return persons.stream().map(PersonResponseDTO::toDto).toList();
         } catch (IllegalArgumentException e) {
             throw new ApiException("Invalid gender", HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    public List<PersonWithUserDTO> getPersonByCpf(String cpf) {
+    public List<PersonResponseDTO> getPersonByCpf(String cpf) {
 
-        List<Person> persons = personRepository.findByCpf(cpf).orElseThrow(() ->
+        List<Person> persons = personRepository.findByCpfContaining(cpf).orElseThrow(() ->
                 new ApiException("No person found", HttpStatus.NOT_FOUND.value()));
 
-        return persons.stream().map(PersonWithUserDTO::toDTO).toList();
+        return persons.stream().map(PersonResponseDTO::toDto).toList();
 
     }
 
-    public PersonWithUserDTO getPersonById(Long id) {
+    public PersonResponseDTO getPersonById(Long id) {
         Person person = personRepository.findById(id).orElseThrow(() ->
                 new ApiException("Person not found", HttpStatus.NOT_FOUND.value()));
 
-        return PersonWithUserDTO.toDTO(person);
+        return PersonResponseDTO.toDto(person);
     }
 
     public void deletePersonById(Long id) {
@@ -173,7 +188,7 @@ public class PersonService {
         personRepository.deleteById(id);
     }
 
-    public PersonWithUserDTO updatePerson(UpdatePersonDTO person, Long id) {
+    public PersonResponseDTO updatePerson(UpdatePersonDTO person, Long id) {
         if (person.getRelationship() != null && Relationship.OWNER.equals(person.getRelationship())) {
             throw new ApiException("Cannot update person with OWNER relationship",
                     HttpStatus.BAD_REQUEST.value());
@@ -197,7 +212,7 @@ public class PersonService {
 
         personRepository.save(personToUpdate);
 
-        return PersonWithUserDTO.toDTO(personToUpdate);
+        return PersonResponseDTO.toDto(personToUpdate);
     }
 
 }

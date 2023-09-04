@@ -14,8 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateUserDTO {
 
-    @Pattern(regexp = "[a-zA-Z\\s-]+", message = "Username must contain only letters, spaces, or hyphens")
-    @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]+$", message = "Username must contain only letters, spaces, or hyphens")
+    @Size(min = 3, max = 50, message = "Username must be between 5 and 50 characters")
     private String username;
 
     @Email(message = "Invalid email")

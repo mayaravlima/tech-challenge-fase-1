@@ -12,11 +12,13 @@ import java.util.Optional;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    Optional<List<Person>> findByName(String name);
+    Optional<List<Person>> findByNameContainingIgnoreCase(String name);
 
     Optional<List<Person>> findByRelationship(Relationship relationship);
 
     Optional<List<Person>> findByGender(Gender gender);
 
-    Optional<List<Person>> findByCpf(String cpf);
+    Optional<List<Person>> findByCpfContaining(String cpf);
+
+    boolean existsByCpf(String cpf);
 }
