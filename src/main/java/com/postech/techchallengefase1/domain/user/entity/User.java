@@ -1,5 +1,7 @@
 package com.postech.techchallengefase1.domain.user.entity;
 
+import com.postech.techchallengefase1.domain.address.entity.Address;
+import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
 import com.postech.techchallengefase1.domain.person.entity.Person;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +29,18 @@ public class User {
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
     private Set<Person> persons;
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    private Set<Address> addresses;
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    private Set<Appliance> appliances;
 
 }

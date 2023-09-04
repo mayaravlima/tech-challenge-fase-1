@@ -1,5 +1,6 @@
 package com.postech.techchallengefase1.domain.person.entity;
 
+import com.postech.techchallengefase1.domain.address.entity.Address;
 import com.postech.techchallengefase1.domain.person.enuns.Gender;
 import com.postech.techchallengefase1.domain.person.enuns.Relationship;
 import com.postech.techchallengefase1.domain.user.entity.User;
@@ -7,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -41,9 +44,12 @@ public class Person {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Person(User user) {
-        this.user = user;
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "person_address",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    Set<Address> addresses = new HashSet<>();
 
 
 }

@@ -2,6 +2,7 @@ package com.postech.techchallengefase1.domain.address.dto;
 
 import com.postech.techchallengefase1.domain.address.entity.Address;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,11 @@ public class CreateAddressDTO {
     @Size(min = 2, max = 50, message = "State must be between 3 and 50 characters")
     private String state;
 
+    @Pattern(regexp = "^[0-9]*$", message = "Zip Code must contain only numbers")
+    @NotNull(message = "Zip Code can't be null")
+    @Size(min = 2, max = 50, message = "Zip Code must be equal to 8 characters")
+    private String zipCode;
+
     public Address getAddress() {
         Address address = new Address();
         address.setStreet(this.street);
@@ -45,6 +51,7 @@ public class CreateAddressDTO {
         address.setNeighborhood(this.neighborhood);
         address.setCity(this.city);
         address.setState(this.state);
+        address.setZipCode(this.zipCode);
         return address;
     }
 

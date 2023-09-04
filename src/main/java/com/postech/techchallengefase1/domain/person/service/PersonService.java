@@ -1,7 +1,9 @@
 package com.postech.techchallengefase1.domain.person.service;
 
+import com.postech.techchallengefase1.domain.address.entity.Address;
 import com.postech.techchallengefase1.domain.exception.ApiException;
 import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
+import com.postech.techchallengefase1.domain.person.dto.PersonWithAddressDTO;
 import com.postech.techchallengefase1.domain.person.dto.PersonWithUserDTO;
 import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.entity.Person;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -76,6 +79,27 @@ public class PersonService {
             throw new ApiException("CPF already registered", HttpStatus.CONFLICT.value());
         }
 
+    }
+
+    public PersonWithAddressDTO associateAddressWithPerson(String username, Long personId, Long addressId) {
+
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new ApiException("Person not found", HttpStatus.NOT_FOUND.value()));
+
+        if (!person.getUser().getUsername().equals(username)) {
+            throw new ApiException("User not associated with this person", HttpStatus.NOT_FOUND.value());
+        }
+
+        Address address = person.getUser().getAddresses().stream()
+                .filter(address1 -> Objects.equals(address1.getId(), addressId))
+                .findFirst()
+                .orElseThrow(() -> new ApiException("Address not found", HttpStatus.NOT_FOUND.value()));
+
+        person.getAddresses().add(address);
+
+        personRepository.save(person);
+
+        return PersonWithAddressDTO.toDto(person);
     }
 
     public List<PersonWithUserDTO> getAllPerson() {
@@ -150,7 +174,7 @@ public class PersonService {
     }
 
     public PersonWithUserDTO updatePerson(UpdatePersonDTO person, Long id) {
-        if(person.getRelationship() != null && Relationship.OWNER.equals(person.getRelationship())) {
+        if (person.getRelationship() != null && Relationship.OWNER.equals(person.getRelationship())) {
             throw new ApiException("Cannot update person with OWNER relationship",
                     HttpStatus.BAD_REQUEST.value());
         }
@@ -158,10 +182,18 @@ public class PersonService {
         Person personToUpdate = personRepository.findById(id).orElseThrow(() ->
                 new ApiException("Person not found", HttpStatus.NOT_FOUND.value()));
 
-        personToUpdate.setName(person.getName() != null ? person.getName() : personToUpdate.getName());
-        personToUpdate.setDateOfBirth(person.getDateOfBirth() != null ? person.getDateOfBirth() : personToUpdate.getDateOfBirth());
-        personToUpdate.setGender(person.getGender() != null ? person.getGender() : personToUpdate.getGender());
-        personToUpdate.setRelationship(person.getRelationship() != null ? person.getRelationship() : personToUpdate.getRelationship());
+        if (person.getName() != null) {
+            personToUpdate.setName(person.getName());
+        }
+        if (person.getDateOfBirth() != null) {
+            personToUpdate.setDateOfBirth(person.getDateOfBirth());
+        }
+        if (person.getGender() != null) {
+            personToUpdate.setGender(person.getGender());
+        }
+        if (person.getRelationship() != null) {
+            personToUpdate.setRelationship(person.getRelationship());
+        }
 
         personRepository.save(personToUpdate);
 

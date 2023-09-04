@@ -1,8 +1,6 @@
 package com.postech.techchallengefase1.domain.address.controller;
 
-import com.postech.techchallengefase1.domain.address.dto.CreateAddressDTO;
-import com.postech.techchallengefase1.domain.address.dto.UpdateAddressDTO;
-import com.postech.techchallengefase1.domain.address.entity.Address;
+import com.postech.techchallengefase1.domain.address.dto.*;
 import com.postech.techchallengefase1.domain.address.service.AddressService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,23 +21,52 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> save(@Valid @RequestBody CreateAddressDTO address) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAddress(address));
+    public ResponseEntity<AddressWithUserDTO> save(@Valid @RequestBody CreateAddressDTO address, @RequestHeader String username) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAddress(address, username));
+    }
+
+    @PostMapping("/{addressId}/appliance/{appliance}")
+    public ResponseEntity<AddressWithApplianceDTO> associateApplianceWithAddress(
+            @RequestHeader String username,
+            @PathVariable("addressId") Long addressId,
+            @PathVariable("appliance") Long appliance) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.associateApplianceWithAddress(username, addressId, appliance));
+
     }
 
     @GetMapping
-    public ResponseEntity<List<Address>> getAll() {
+    public ResponseEntity<List<AddressWithUserAndPersonDTO>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAllAddress());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Address> getById(@PathVariable Long id) {
+    public ResponseEntity<AddressWithUserAndPersonDTO> getById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAddressById(id));
     }
 
-    @PutMapping
-    public ResponseEntity<Address> update(@Valid @RequestBody UpdateAddressDTO address) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateAddress(address));
+    @GetMapping("/search/street/{street}")
+    public ResponseEntity<List<AddressWithUserAndPersonDTO>> searchByStreet(@PathVariable String street) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAddressByStreet(street));
+    }
+
+    @GetMapping("/search/neighborhood/{neighborhood}")
+    public ResponseEntity<List<AddressWithUserAndPersonDTO>> searchByNeighborhood(@PathVariable String neighborhood) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAddressByNeighborhood(neighborhood));
+    }
+
+    @GetMapping("/search/city/{city}")
+    public ResponseEntity<List<AddressWithUserAndPersonDTO>> searchByCity(@PathVariable String city) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAddressByCity(city));
+    }
+
+    @GetMapping("/search/state/{state}")
+    public ResponseEntity<List<AddressWithUserAndPersonDTO>> searchByState(@PathVariable String state) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getAddressByState(state));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AddressWithUserAndPersonDTO> update(@Valid @RequestBody UpdateAddressDTO address, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateAddress(address, id));
     }
 
     @DeleteMapping("/{id}")

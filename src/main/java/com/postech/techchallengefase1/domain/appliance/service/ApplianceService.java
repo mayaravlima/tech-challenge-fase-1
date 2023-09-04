@@ -1,10 +1,11 @@
 package com.postech.techchallengefase1.domain.appliance.service;
 
-import com.postech.techchallengefase1.domain.appliance.dto.CreateApplianceDTO;
-import com.postech.techchallengefase1.domain.appliance.dto.UpdateApplianceDTO;
+import com.postech.techchallengefase1.domain.appliance.dto.*;
 import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
 import com.postech.techchallengefase1.domain.appliance.repository.ApplianceRepository;
 import com.postech.techchallengefase1.domain.exception.ApiException;
+import com.postech.techchallengefase1.domain.user.entity.User;
+import com.postech.techchallengefase1.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,21 +18,58 @@ public class ApplianceService {
 
     private final ApplianceRepository applianceRepository;
 
-    public Appliance saveAppliance(CreateApplianceDTO appliance) {
-        Appliance newAppliance = applianceRepository.save(appliance.getAppliance());
-        if(newAppliance.getId() == null) {
-            throw new ApiException("Appliance already exists", HttpStatus.CONFLICT.value());
+    private final UserRepository userRepository;
+
+    public ApplianceWithUserDTO saveAppliance(CreateApplianceDTO createApplianceDTO, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ApiException("User not found", HttpStatus.NOT_FOUND.value()));
+
+        Appliance appliance = createApplianceDTO.getAppliance();
+        appliance.setUser(user);
+
+        applianceRepository.save(appliance);
+
+        return ApplianceWithUserDTO.toDto(appliance);
+    }
+
+    public List<ApplianceWithUserAndAddressDTO> getAllAppliance() {
+        List<Appliance> appliances = applianceRepository.findAll();
+
+        if (appliances.isEmpty()) {
+            throw new ApiException("Appliances not found", HttpStatus.NOT_FOUND.value());
         }
-        return newAppliance;
+
+        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
     }
 
-    public List<Appliance> getAllAppliance() {
-        return applianceRepository.findAll();
-    }
-
-    public Appliance getApplianceById(Long id) {
-        return applianceRepository.findById(id).orElseThrow(() ->
+    public ApplianceWithUserAndAddressDTO getApplianceById(Long id) {
+        Appliance appliance = applianceRepository.findById(id).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+        return ApplianceWithUserAndAddressDTO.toDto(appliance);
+    }
+
+    public List<ApplianceWithUserAndAddressDTO> getApplianceByName(String name) {
+        List<Appliance> appliances = applianceRepository.findByName(name).orElseThrow(() ->
+                new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+    }
+
+    public List<ApplianceWithUserAndAddressDTO> getApplianceByBrand(String brand) {
+        List<Appliance> appliances = applianceRepository.findByBrand(brand).orElseThrow(() ->
+                new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+    }
+
+    public List<ApplianceWithUserAndAddressDTO> getApplianceByModel(String model) {
+        List<Appliance> appliances = applianceRepository.findByModel(model).orElseThrow(() ->
+                new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
+    }
+
+    public List<ApplianceWithUserAndAddressDTO> getApplianceByPower(Long power) {
+        List<Appliance> appliances = applianceRepository.findByPower(power).orElseThrow(() ->
+                new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+        return appliances.stream().map(ApplianceWithUserAndAddressDTO::toDto).toList();
     }
 
     public void deleteApplianceById(Long id) {
@@ -41,16 +79,41 @@ public class ApplianceService {
         applianceRepository.deleteById(id);
     }
 
-    public Appliance updateAppliance(UpdateApplianceDTO appliance) {
-        Appliance applianceToUpdate = applianceRepository.findById(appliance.getId()).orElseThrow(() ->
+    private String updateIfNotNull(String newValue, String currentValue) {
+        return newValue != null ? newValue : currentValue;
+    }
+
+    private Long updateIfNotNull(Long newValue, Long currentValue) {
+        return newValue != null ? newValue : currentValue;
+    }
+
+    public ApplianceWithUserAndAddressDTO updateAppliance(UpdateApplianceDTO updateApplianceDTO, Long id) {
+        Appliance appliance = applianceRepository.findById(id).orElseThrow(() ->
                 new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
 
-        Appliance updatedAppliance = new Appliance();
-        updatedAppliance.setId(applianceToUpdate.getId());
-        updatedAppliance.setName(appliance.getName() != null ? appliance.getName() : applianceToUpdate.getName());
-        updatedAppliance.setBrand(appliance.getBrand() != null ? appliance.getBrand() : applianceToUpdate.getBrand());
-        updatedAppliance.setModel(appliance.getModel() != null ? appliance.getModel() : applianceToUpdate.getModel());
-        updatedAppliance.setPower(appliance.getPower() != null ? appliance.getPower() : applianceToUpdate.getPower());
-        return applianceRepository.save(updatedAppliance);
+        if (updateApplianceDTO.getName() != null) {
+            appliance.setName(updateApplianceDTO.getName());
+        }
+        if (updateApplianceDTO.getBrand() != null) {
+            appliance.setBrand(updateApplianceDTO.getBrand());
+        }
+        if (updateApplianceDTO.getModel() != null) {
+            appliance.setModel(updateApplianceDTO.getModel());
+        }
+        if (updateApplianceDTO.getPower() != null) {
+            appliance.setPower(updateApplianceDTO.getPower());
+        }
+
+        applianceRepository.save(appliance);
+
+        return ApplianceWithUserAndAddressDTO.toDto(appliance);
+    }
+
+    public String calculateEnergyConsumption(CalculateConsumptionRequest request) {
+        Appliance appliance = applianceRepository.findById(request.getApplicationId()).orElseThrow(() ->
+                new ApiException("Appliance not found", HttpStatus.NOT_FOUND.value()));
+
+        double energyConsumption = (appliance.getPower() * request.getHoursOfUse()) / 1000.0;
+        return "Energy consumption: " + energyConsumption + " kWh";
     }
 }

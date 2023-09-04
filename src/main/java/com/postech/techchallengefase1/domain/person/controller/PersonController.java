@@ -1,6 +1,7 @@
 package com.postech.techchallengefase1.domain.person.controller;
 
 import com.postech.techchallengefase1.domain.person.dto.CreatePersonDTO;
+import com.postech.techchallengefase1.domain.person.dto.PersonWithAddressDTO;
 import com.postech.techchallengefase1.domain.person.dto.PersonWithUserDTO;
 import com.postech.techchallengefase1.domain.person.dto.UpdatePersonDTO;
 import com.postech.techchallengefase1.domain.person.service.PersonService;
@@ -23,6 +24,15 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonWithUserDTO> save(@Valid @RequestBody CreatePersonDTO person, @RequestHeader String username) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.savePerson(person, username));
+    }
+
+    @PostMapping("/{personId}/address/{addressId}")
+    public ResponseEntity<PersonWithAddressDTO> associateAddressWithPerson(
+            @RequestHeader String username,
+            @PathVariable("personId") Long personId,
+            @PathVariable("addressId") Long addressId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.associateAddressWithPerson(username, personId, addressId));
+
     }
 
     @GetMapping

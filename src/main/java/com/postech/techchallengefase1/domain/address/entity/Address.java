@@ -1,10 +1,14 @@
 package com.postech.techchallengefase1.domain.address.entity;
 
-import com.postech.techchallengefase1.domain.property.entity.Property;
+import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
+import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,5 +39,22 @@ public class Address {
 
     @Column(name = "state", nullable = false)
     private String state;
+
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToMany(mappedBy = "addresses")
+    Set<Person> persons;
+
+    @OneToMany(mappedBy = "address",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
+    private Set<Appliance> appliances;
+
 
 }

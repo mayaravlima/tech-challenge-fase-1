@@ -107,8 +107,12 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ApiException("User not found", 404));
 
-        user.setUsername(Objects.nonNull(updateUserDTO.getUsername()) ? updateUserDTO.getUsername() : user.getUsername());
-        user.setEmail(Objects.nonNull(updateUserDTO.getEmail()) ? updateUserDTO.getEmail() : user.getEmail());
+        if (updateUserDTO.getUsername() != null) {
+            user.setUsername(updateUserDTO.getUsername());
+        }
+        if (updateUserDTO.getEmail() != null) {
+            user.setEmail(updateUserDTO.getEmail());
+        }
 
         try {
             userRepository.save(user);
