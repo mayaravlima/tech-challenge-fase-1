@@ -46,7 +46,7 @@ Foi utilizado o Swagger para documentar a API. Para acessar a documentação bas
 ## Relatório Técnico
 Dependências novas utilizadas:
 - Para essa fase optei em utilizar o banco de dados H2, pois ele é incorporado diretamente na API, não exigindo uma instalação separada ou configurações complexas.
-- À medida que a quantidade de endpoints se expandia, optei por adotar o Swagger OpenAPI para automatizar a geração da documentação.
+- À medida que a quantidade de endpoints se expandia, optei por utilizar o Swagger OpenAPI para automatizar a geração da documentação.
 
 
 Estrutura da API:
@@ -74,6 +74,6 @@ Decisões de projeto:
 - Somente o usuário controla o sistema. Ou seja, todas as operações de CRUD são feitas através do username dele.
 - Se um usuário é deletado, todas as pessoas, endereços e eletrodomésticos associados a ele também são deletados.
 - Se um endereço é deletado, todos os eletrodomésticos associados a ele também são deletados. Ou seja, o endereço é o dono da relação de eletrodomésticos. A relacão entre eletrodomésticos e pessoas é feita através do endereço. Simulando um casa que tem seus eletrodomésticos que pode ser utilizado por todas as pessoas que moram nela.
-- Um usuário só pode ter uma pessoas cadastrada como PARTNER ou SPOUSE, e duas pessoas como PARENT.
+- Um usuário só pode ter uma pessoa cadastrada como PARTNER ou SPOUSE, e duas pessoas como PARENT.
 - O número de CPF é único para cada pessoa.
 - O email e username é único para cada usuário.
