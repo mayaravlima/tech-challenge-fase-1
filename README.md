@@ -51,6 +51,7 @@ Dependências novas utilizadas:
 
 Estrutura da API:
 - A arquitetura do banco de dados pensanda foi: 
+
 ![img.png](img.png)
 
 Parti do princípio que um usuário tem várias propriedades, e em cada propriedade há um endereço com várias pessoas e vários eletrodomésticos.
