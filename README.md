@@ -1,6 +1,6 @@
 # Pós-Tech Arquitetura e Desenvolvimento Java
-- Fase 1: Nessa primeira fase o objetivo era criar API para o CRUD de Pessoas, Endereços e Eletrodoméstico focado na integridade dados.
-
+- Fase 2: Nesta segunda fase, o objetivo era alterar a API desenvolvida na fase anterior para adicionar a persistência das informações em banco de dados e criar as APIs de leitura, alteração e exclusão dos dados. 
+        
 ## Índice
 
 - [Pré-requisitos](#pré-requisitos)
