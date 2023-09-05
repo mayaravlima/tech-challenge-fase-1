@@ -4,8 +4,6 @@ import com.postech.techchallengefase1.domain.user.dto.CreateUserDTO;
 import com.postech.techchallengefase1.domain.user.dto.UpdateUserDTO;
 import com.postech.techchallengefase1.domain.user.dto.UserResponseDTO;
 import com.postech.techchallengefase1.domain.user.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,14 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Tag(name = "User", description = "Controller responsible for user operations")
 @AllArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Create a new user")
     @PostMapping
     public ResponseEntity<UserResponseDTO> saveUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(createUserDTO));

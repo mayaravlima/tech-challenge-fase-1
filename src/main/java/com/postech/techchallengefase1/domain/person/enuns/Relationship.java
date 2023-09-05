@@ -8,7 +8,8 @@ public enum Relationship {
     SPOUSE,
     SIBLING,
     PARTNER,
-    RELATIVE;
+    RELATIVE,
+    CHILD;
 
     @JsonCreator
     public static Relationship fromString(String name) {
