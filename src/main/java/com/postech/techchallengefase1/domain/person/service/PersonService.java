@@ -36,20 +36,14 @@ public class PersonService {
         }
     }
 
-    private void checkPartnerRelationship(User user) {
-        if (user.getPersons().stream().anyMatch(person -> Relationship.PARTNER.equals(person.getRelationship()))) {
-            throw new ApiException("Cannot create more than 1 person with PARTNER relationship",
+    private void checkPartnerOrSpouseRelationship(User user) {
+        if (user.getPersons().stream().anyMatch(person -> Relationship.PARTNER.equals(person.getRelationship()))
+        || user.getPersons().stream().anyMatch(person -> Relationship.SPOUSE.equals(person.getRelationship()))) {
+            throw new ApiException("Cannot create more than 1 person with PARTNER/SPOUSE relationship",
                     HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    private void checkSpouseRelationship(User user) {
-        System.out.println(user.getPersons().stream().filter(person -> Relationship.SPOUSE.equals(person.getRelationship())).count());
-        if (user.getPersons().stream().anyMatch(person -> Relationship.SPOUSE.equals(person.getRelationship()))) {
-            throw new ApiException("Cannot create more than 1 person with SPOUSE relationship",
-                    HttpStatus.BAD_REQUEST.value());
-        }
-    }
 
     private Person createPerson(CreatePersonDTO createPersonDTO, User user) {
         Person person = new Person();
@@ -81,8 +75,7 @@ public class PersonService {
 
         switch (createPersonDTO.getRelationship()) {
             case PARENT -> checkParentRelationship(user);
-            case PARTNER -> checkPartnerRelationship(user);
-            case SPOUSE -> checkSpouseRelationship(user);
+            case PARTNER, SPOUSE -> checkPartnerOrSpouseRelationship(user);
         }
 
         Person person = createPerson(createPersonDTO, user);
