@@ -69,7 +69,7 @@ public class ApplianceController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Appliance deleted successfully"));
     }
 
-    @GetMapping("/calculate")
+    @PostMapping("/calculate")
     public ResponseEntity<Map<String, String>> calculate(@RequestBody CalculateConsumptionRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("Energy consumption", service.calculateEnergyConsumption(request)));
     }
