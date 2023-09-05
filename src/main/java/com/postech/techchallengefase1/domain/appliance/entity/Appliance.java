@@ -1,37 +1,40 @@
 package com.postech.techchallengefase1.domain.appliance.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
+import com.postech.techchallengefase1.domain.address.entity.Address;
+import com.postech.techchallengefase1.domain.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@EqualsAndHashCode(exclude = {"id"})
 @Getter
 @Setter
+@Entity
+@Table(name = "appliance")
 public class Appliance {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "Name can't be empty or null")
-    @Size(min = 2, max = 50, message = "Name must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @NotNull(message = "Model can't be empty or null")
-    @Size(min = 2, max = 50, message = "Model must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "model", nullable = false)
     private String model;
 
-    @NotNull(message = "Brand can't be empty or null")
-    @Size(min = 2, max = 50, message = "Brand must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "brand", nullable = false)
     private String brand;
 
-    @NotNull(message = "Power can't be empty or null")
-    @Positive(message = "Power must be more than 0")
-    @JsonProperty
+    @Column(name = "power", nullable = false)
     private Long power;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
 }

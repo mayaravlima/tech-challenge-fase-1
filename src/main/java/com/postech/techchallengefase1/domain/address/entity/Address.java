@@ -1,47 +1,58 @@
 package com.postech.techchallengefase1.domain.address.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
+import com.postech.techchallengefase1.domain.appliance.entity.Appliance;
+import com.postech.techchallengefase1.domain.person.entity.Person;
+import com.postech.techchallengefase1.domain.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@EqualsAndHashCode(exclude = {"id"})
+import java.util.Set;
+
 @Getter
 @Setter
-@ToString
+@Entity
+@Table(name = "address")
 public class Address {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "Street can't be null")
-    @Size(min = 2, max = 50, message = "Street must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "street", nullable = false)
     private String street;
 
-    @NotNull(message = "Number can't be null")
-    @Positive(message = "Number must be more than 0")
-    @JsonProperty
+    @Column(name = "number", nullable = false)
     private Long number;
 
-    @JsonProperty
+    @Column(name = "complement")
     private String complement;
 
-    @NotNull(message = "Neighborhood can't be null")
-    @Size(min = 2, max = 50, message = "Neighborhood must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "neighborhood", nullable = false)
     private String neighborhood;
 
-    @NotNull(message = "City can't be null")
-    @Size(min = 2, max = 50, message = "City must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @NotNull(message = "State can't be null")
-    @Size(min = 2, max = 50, message = "State must be between 3 and 50 characters")
-    @JsonProperty
+    @Column(name = "state", nullable = false)
     private String state;
+
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToMany(mappedBy = "addresses")
+    Set<Person> persons;
+
+    @OneToMany(mappedBy = "address",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true)
+    private Set<Appliance> appliances;
+
 }
